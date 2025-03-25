@@ -35,7 +35,7 @@ saveas(fig, "plots/ce1_impulse.png")
 
 %% Autocorrelation Function 
 
-prbs_64 = prbs(6, 4);
+prbs_64 = prbs(3, 2, ones(1, 3));
 [R, h] = intcor(prbs_64, prbs_64); 
 
 fig = figure();
@@ -75,14 +75,16 @@ U_K = U(:, 1:K);
 Theta_K = pinv(U_K)*Y;
     
 lambda = 0.5;
-Theta_regularization = inv(U'*U + lambda*eye(size(U)))*U'*Y;
+Theta_regularization = (U'*U + lambda*eye(size(U))) \ (U'*Y);
 
 sys = tf([1.2], [1, 2, 1.35, 1.2]);
 sys_dt = c2d(sys, Ts, 'zoh');
 sys_impulse = impulse(sys, t)*Ts;
 
 figure
-plot(Theta_K);
+stem(t(1:length(Theta_K)), Theta_K, 'filled');
 hold on
-plot(Theta_regularization);
-plot(sys_impulse);
+stem(t(1:length(Theta_regularization)), Theta_regularization, 'filled');
+stem(t, sys_impulse, 'filled');
+
+legend(["pinv", "regularized", "system"])

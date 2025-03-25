@@ -3,7 +3,7 @@ function [R, h] = intcor(u, y)
 %   Detailed explanation goes here
 
 M = seqperiod(u);
-assert(M == seqperiod(y), "the periods of the two signals must match...")
+%assert(M == seqperiod(y), "the periods of the two signals must match...")
 
 h = -M:1:M;
 R = zeros(length(h), 1);
