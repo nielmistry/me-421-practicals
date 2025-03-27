@@ -1,8 +1,10 @@
 function u=prbs(n,p,uinit)
 
+    % test change
+
 % u=prbs(n,p)
 % n: shift register length
-% p: number of periods in signal
+% p: number of periods in signal 
 
 if nargin<3, uinit=ones(1,n);end
     

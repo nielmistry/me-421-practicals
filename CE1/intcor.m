@@ -12,7 +12,7 @@ for i=1:length(h)
     for k=0:M-1
         k_wrapped = mod(k, M) + 1;
         kh_wrapped = mod(k - h(i), M) + 1;
-        R(i) = R(i) + u(k_wrapped)*u(kh_wrapped);
+        R(i) = R(i) + u(k_wrapped)*y(kh_wrapped);
     end
     R(i) = R(i) * 1/M;
 end
