@@ -22,11 +22,11 @@ Syu = fft(Ryu, N);
 Suu = fft(Ruu, N);
 
 fs = 1 / Ts;  
-f = (0:Nfft-1) * (fs / Nfft); 
+f = (0:N-1) * (fs / N); 
 
 
-f_half = f(1:floor(Nfft/2)); % only +ve
-H_half = H_est(1:floor(Nfft/2));
+f_half = f(1:floor(N/2)); % only +ve
+H_half = H_est(1:floor(N/2));
 
 
 H_frd = frd(H_half, 2*pi*f_half);  
