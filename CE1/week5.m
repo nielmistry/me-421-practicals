@@ -3,19 +3,13 @@ clear all
 
 u = prbs(10, 2);
 
-Ts = 0.25
-stop_time = Ts*(length(u) - 1);
-rnd_var = 0.01;
+Ts = 0.25;
 [~, ~, ~] = mkdir("plots/");
 
+out = get_system_response(u, Ts);
+y = out.Data;
 
-simin = struct();
-simin.time = 0:Ts:Ts*(length(u) - 1);
-simin.signals.values = u;
 
-result = sim("model.slx");
-
-y = result.simout.Data;
 
 period = seqperiod(u);
 num_periods = length(u)/period;
