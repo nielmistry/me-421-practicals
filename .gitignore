@@ -32,3 +32,4 @@ octave-workspace
 
 *.pdf
 *.png
+.DS_Store

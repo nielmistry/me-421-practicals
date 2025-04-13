@@ -4,8 +4,8 @@ stop_time = (N-1) * Ts;
 simin.time = (0:Ts:stop_time)';  
 
 %u = rand(N, 1); 
-u = 2 * randi([0, 1], N, 1) - 1;
-% u = randi([-3, 3], N, 1); 
+%u = 2 * randi([0, 1], N, 1) - 1;
+u = randi([-3, 3], N, 1); 
 simin.signals.values = u; 
 simin.signals.dimensions = 1;
 set_param('model', 'StopTime', num2str(stop_time));
@@ -24,18 +24,15 @@ Suu = fft(Ruu, N);
 fs = 1 / Ts;  
 f = (0:N-1) * (fs / N); 
 
-H_est = Syu./Suu;
+
+f_half = f(1:floor(N/2)); % only +ve
+H_half = H_est(1:floor(N/2));
 
 
-
-
-
-H_frd = frd(H_est, 2*pi*f);  
+H_frd = frd(H_half, 2*pi*f_half);  
 
 
 figure;
-bode(H_frd, []);
+bode(H_frd);
 grid on;
 title('Frequency Response ');
-
-legend(["nonaveraged", "averaged"])
