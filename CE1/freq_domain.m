@@ -1,7 +1,7 @@
 close all
 clear all
 
-u = prbs(10, 6);
+u = prbs(10, 2);
 
 Ts = 0.25
 stop_time = Ts*(length(u) - 1);
@@ -31,9 +31,11 @@ averaged_fft_u = mean(ffts_u, 1);
 averaged_fft_y = mean(ffts_y, 1);
 
 N = length(averaged_fft_y);
-Fvec = 0:Ts/N:(N - 1)*Ts/N;
+fs = 1/Ts;
+Fvec = 0:fs/N:(N - 1)*fs/N;
+Fvec = Fvec * 2 * pi;
 
-sys_identified = frd(averaged_fft_y, Fvec);
+sys_identified = frd(averaged_fft_y./averaged_fft_u, Fvec);
 sys_true = tf([1.2], [1, 2, 1.35, 1.2]);
 sys_true = c2d(sys_true, Ts);
 
