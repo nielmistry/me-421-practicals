@@ -27,7 +27,7 @@ for chunk=1:chunks
     range = (mid - floor(group_len/2) + 1):(mid + floor(group_len/2));
 
     Syu = fft(Ryu(range) .* window, group_len);
-    Suu = fft(Ruu(range), group_len);
+    Suu = fft(Ruu(range) .* window, group_len);
 
     Syu_sum = Syu_sum + Syu;
     Suu_sum = Suu_sum + Suu;
