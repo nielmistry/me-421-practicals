@@ -29,43 +29,57 @@ H_avg_hamming = frd(G_avg_hamming, f_avg);
 sys_true = tf([1.2], [1, 2, 1.35, 1.2]);
 sys_true = c2d(sys_true, Ts);
 
-f = figure(1);
-bode(H, 'r.', {0, 4});
+min_freq = 0;
+max_freq = 4;
+
+f_naive = figure(1);
+bode(H, 'r.', {min_freq, max_freq});
 hold on
-bode(sys_true, {0, 4})
+bode(sys_true, 'b', {min_freq, max_freq})
 legend(["Identified", "Real"])
 grid on;
 title('No Window, No Averaging');
 
-f2 = figure(2);
-bode(H_hann, 'r.', {0, 4});
+f_hann_no_avg = figure(2);
+bode(H_hann, 'r.', {min_freq, max_freq});
 hold on
-bode(sys_true, {0, 4})
+bode(sys_true, 'b', {min_freq, max_freq})
 legend(["Identified", "Real"])
 grid on;
 title('Hann Window, No Averaging');
 
-f3 = figure(3);
-bode(H_avg_hann, 'r.', {0, 4});
+f_hann_avg = figure(3);
+bode(H_avg_hann, 'r.', {min_freq, max_freq});
 hold on
-bode(sys_true, {0, 4})
+bode(sys_true, 'b', {min_freq, max_freq})
 legend(["Identified", "Real"])
 grid on;
-title('Hann Window, 10 Fold Averaging');
+title('Hann Window, 10 Group Averaging');
 
 
-f2 = figure(4);
-bode(H_hamming, 'r.', {0, 4});
+f4 = figure(4);
+bode(H_hamming, 'r.', {min_freq, max_freq});
 hold on
-bode(sys_true, {0, 4})
+bode(sys_true, 'b', {min_freq, max_freq})
 legend(["Identified", "Real"])
 grid on;
 title('Hamming Window, No Averaging');
 
-f3 = figure(5);
-bode(H_avg_hamming, 'r.', {0, 4});
+f5 = figure(5);
+bode(H_avg_hamming, 'r.', {min_freq, max_freq});
 hold on
-bode(sys_true, {0, 4})
+bode(sys_true, 'b', {min_freq, max_freq})
 legend(["Identified", "Real"])
 grid on;
-title('Hamming Window, 10 Fold Averaging');
+title('Hamming Window, 10 Group Averaging');
+
+
+print(f_naive, "plots/week6_naive.png", '-dpng', '-r400');
+print(f_hann_no_avg, "plots/week6_hann.png", '-dpng', '-r400');
+print(f_hann_avg, "plots/week6_hann_avg.png", '-dpng', '-r400');
+
+
+
+
+
+
