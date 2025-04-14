@@ -1,12 +1,13 @@
 
 n = 8;      
 p = 2;      
-uinit = ones(1, n); 
-u = prbs(n, p, uinit);
+%uinit = ones(1, n); 
+u = prbs(n, p);
 
 s = tf('s');
 G_s = 1.2 / (s^3 + 2*s^2 + 1.35*s + 1.2); 
 G_z = c2d(G_s, 0.25, 'zoh');  
+
 [y, t] = lsim(G_z, u, 0:0.25:(length(u)-1)*0.25);
 
 [R, h] = intcor(y, u);
@@ -14,7 +15,7 @@ G_z = c2d(G_s, 0.25, 'zoh');
 xu = xcorr(y, u, 'unbiased');
 g_xcorr = xu(length(u):end); 
 
-impulse_true = impulse(G_z, t);
+impulse_true = impulse(G_z, t)*Ts;
 
 % Plot the results
 figure;
