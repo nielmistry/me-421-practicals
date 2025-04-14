@@ -11,8 +11,9 @@ y = get_system_response(in_sig, Ts);
 [Ruu_intcor, h2] = intcor(in_sig, in_sig);
 
 g_intcor = Ryu_intcor/Ruu_intcor(find(h2==0));
+% g_intcor = g_intcor';
 
-figure
+f = figure();
 plot(h, g_intcor, 'DisplayName', 'intcor');
 hold on
 
@@ -31,6 +32,24 @@ impulse_true = impulse(G_z, y.Time) * Ts;
 
 plot(impulse_true, 'DisplayName', 'true');
 
-xlim([0, 200])
+time_limit = 200;
+xlim([0, time_limit])
+xlabel("Time (s)");
+ylabel("Magnitude")
+
+title("Impulse Response of Various Methods")
+
 
 legend()
+saveas(f, "plots/week4.png")
+%%
+
+intcor_zero = find(h==0);
+g_intcor = g_intcor(intcor_zero:intcor_zero + time_limit - 1);
+
+xcorr_zero = find(lags2==0);
+g_xcorr = g_xcorr(xcorr_zero:xcorr_zero + time_limit - 1);
+
+impulse_true = impulse_true(1:time_limit);
+intcor_err = vecnorm(g_intcor - impulse_true);
+xcorr_err = vecnorm(g_xcorr - impulse_true);
