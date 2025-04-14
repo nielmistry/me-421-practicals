@@ -1,28 +1,44 @@
-clear all
-close all 
+function [f, G] = spectral_analysis(u, y, Ts, window_name, chunks)
 
-N = 2000;
-Ts = 0.4; 
-u = rand(N, 1)*1.4 - 0.7;
+N = length(u);
 
-out = get_system_response(u, Ts);
+group_len = floor(N/chunks);
+Syu_sum = zeros(group_len, 1);
+Suu_sum = zeros(group_len, 1);
 
-%% Method 1: Vanilla Frequency Response
 
-[Ryu, h1] = intcor(out.Data, u); 
-[Ruu, h2] = intcor(u, u);
-assert(all(h1 == h2))
-Ryu = Ryu(h1 > 0);
-Ruu = Ruu(h1 > 0);
-h = h1(h1 > 0);
-n = 0:1:N - 1;
-exp_vec = exp(-1j.*h*2*pi.*n/N);
+if strcmp(window_name, "hamming") 
+    window = hamming(group_len);
+elseif strcmp(window_name, "hann")
+    window = hann(group_len);
+elseif strcmp(window_name, "none")
+    window = ones(group_len, 1);
+else
+    disp("Improper window name")
+end
 
-Syu = Ryu * exp_vec;
-Suu = Ruu * exp_vec;
+for chunk=1:chunks
+    idx = ((chunk - 1)*group_len + 1):(chunk*group_len);
 
-G = Syu./Suu;
+    [Ryu, h] = xcorr(y(idx), u(idx), 'unbiased');
+    [Ruu, h] = xcorr(u(idx), u(idx), 'unbiased');
 
-fvec = 0:1/(Ts*N):(N-1)/(Ts*N);
+    mid = group_len; 
+    range = (mid - floor(group_len/2) + 1):(mid + floor(group_len/2));
 
-stem(fvec, G);
+    Syu = fft(Ryu(range) .* window, group_len);
+    Suu = fft(Ruu(range), group_len);
+
+    Syu_sum = Syu_sum + Syu;
+    Suu_sum = Suu_sum + Suu;
+end
+
+Syu_avg = Syu_sum/chunks;
+Suu_avg = Suu_sum/chunks;
+
+G = Syu_avg ./ Suu_avg;
+fs = 1 / Ts;
+f = (0:(group_len - 1)) * (fs / group_len);
+f = 2*pi*f;
+end
+
