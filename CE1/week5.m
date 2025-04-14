@@ -9,16 +9,15 @@ Ts = 0.25;
 out = get_system_response(u, Ts);
 y = out.Data;
 
-
-
 period = seqperiod(u);
 num_periods = length(u)/period;
 ffts_u = zeros(num_periods, period);
 ffts_y = zeros(num_periods, period);
 
 for i=0:num_periods - 1
-    ffts_u(i + 1, :) = fft(u((i*period + 1):((i + 1) * period)));
-    ffts_y(i + 1, :) = fft(y((i*period + 1):((i + 1) * period)));
+    range = (i*period + 1):((i + 1)*period);
+    ffts_u(i + 1, :) = fft(u(range));
+    ffts_y(i + 1, :) = fft(y(range));
 end
 
 averaged_fft_u = mean(ffts_u, 1);
@@ -34,7 +33,13 @@ sys_true = tf([1.2], [1, 2, 1.35, 1.2]);
 sys_true = c2d(sys_true, Ts);
 
 
-figure
-bode(sys_identified);
+f = figure()
+bode(sys_identified, {0, 4});
 hold on
-bode(sys_true);
+bode(sys_true, {0, 4});
+% xlim([])
+legend('Location', 'southoutside')
+title("Bode Plot of FRD Model vs. True System")
+grid("on")
+
+saveas(f, "plots/week5.png")
