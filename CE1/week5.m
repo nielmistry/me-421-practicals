@@ -32,14 +32,14 @@ sys_identified = frd(averaged_fft_y./averaged_fft_u, Fvec);
 sys_true = tf([1.2], [1, 2, 1.35, 1.2]);
 sys_true = c2d(sys_true, Ts);
 
-
-f = figure()
-bode(sys_identified, {0, 4});
+%%
+f = figure();
+bp = bodeplot(sys_identified, 'r.', {0.01, 4});
 hold on
-bode(sys_true, {0, 4});
-% xlim([])
+bp2 = bodeplot(sys_true, {0, 4});
+
 legend('Location', 'southoutside')
 title("Bode Plot of FRD Model vs. True System")
 grid("on")
 
-saveas(f, "plots/week5.png")
+print(f, 'plots/week5.png', '-dpng', '-r300');

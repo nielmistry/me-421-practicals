@@ -13,16 +13,20 @@ y = get_system_response(in_sig, Ts);
 g_intcor = Ryu_intcor/Ruu_intcor(find(h2==0));
 % g_intcor = g_intcor';
 
-f = figure();
-plot(h, g_intcor, 'DisplayName', 'intcor');
-hold on
+
 
 %%
 [Ryu_xcorr, lags] = xcorr(y.Data, in_sig, 'unbiased'); 
 [Ruu_xcorr, lags2] = xcorr(in_sig, in_sig, 'unbiased');
 
 g_xcorr = Ryu_xcorr/Ruu_xcorr(find(lags2==0));
-plot(lags, g_xcorr, 'DisplayName', 'xcorr');
+
+%%
+
+f = figure();
+stairs(h, g_intcor, 'LineWidth', 1.5, 'Color', [0 0.4470 0.7410], 'DisplayName', 'intcor');
+hold on
+stairs(lags, g_xcorr, 'LineWidth', 1.5, 'Color', [0.8500 0.3250 0.0980], 'DisplayName', 'xcorr');
 
 
 G_s = tf([1.2], [1, 2, 1.35, 1.2]);
@@ -30,7 +34,7 @@ G_z = c2d(G_s, 0.25, 'zoh');
 
 impulse_true = impulse(G_z, y.Time) * Ts;
 
-plot(impulse_true, 'DisplayName', 'true');
+plot(impulse_true, 'LineWidth', 2, 'Color', [0.9290 0.6940 0.1250], 'DisplayName', 'true');
 
 time_limit = 200;
 xlim([0, time_limit])
@@ -38,10 +42,10 @@ xlabel("Time (s)");
 ylabel("Magnitude")
 
 title("Impulse Response of Various Methods")
-
-
 legend()
-saveas(f, "plots/week4.png")
+grid("on")
+
+print(f, 'plots/week4.png', '-dpng', '-r600');
 %%
 
 intcor_zero = find(h==0);
