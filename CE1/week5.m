@@ -1,7 +1,7 @@
 close all
 clear all
 
-u = prbs(10, 2);
+u = 0.7*prbs(10, 2);
 
 Ts = 0.25;
 [~, ~, ~] = mkdir("plots/");
