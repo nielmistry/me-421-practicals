@@ -11,8 +11,8 @@ t = (0:Ts:50)';
 u = 0.7*(t > 1);
 
 result = get_system_response(u, Ts);
+stairs(result.Time, result.Data, 'LineWidth', 1.5);
 
-plot(result)
 title("Step Response")
 ylabel("Value")
 saveas(fig, "plots/ce1_step.png")
@@ -22,7 +22,7 @@ saveas(fig, "plots/ce1_step.png")
 fig = figure();
 u = 0.7*(t == t(2));
 result = get_system_response(u, Ts);
-plot(result)
+stairs(result.Time, result.Data, 'LineWidth', 1.5);
 
 title("Impulse Response")
 ylabel("Value")
@@ -60,13 +60,12 @@ t = 0:Ts:(N-1)*Ts;
 
 result = get_system_response(u, Ts);
 Y = result.Data;
-Y = Y(2:end);
 
 
 % Assume length is < 30s (how can we do better?) 
 K = floor(30/Ts); 
 U_K = U(:, 1:K);
-Theta_K = pinv(U_K)*Y; % TODO BROKEN
+Theta_K = pinv(U_K)*Y;
     
 lambda = 0.5;
 Theta_regularization = (U'*U + lambda*eye(size(U))) \ (U'*Y);
@@ -74,11 +73,24 @@ Theta_regularization = (U'*U + lambda*eye(size(U))) \ (U'*Y);
 sys = tf([1.2], [1, 2, 1.35, 1.2]);
 sys_dt = c2d(sys, Ts, 'zoh');
 sys_impulse = impulse(sys, t)*Ts;
+figure;
 
-figure
-stem(t(1:length(Theta_K)), Theta_K, 'filled');
-hold on
-stem(t(1:length(Theta_regularization)), Theta_regularization, 'filled');
-stem(t, sys_impulse, 'filled');
+stairs(t(1:length(Theta_K)), Theta_K, 'LineWidth', 1.5, 'Color', [0 0.4470 0.7410]); % Blue
+hold on;
+stairs(t(1:length(Theta_regularization)), Theta_regularization, 'LineWidth', 1.5, 'Color', [0.8500 0.3250 0.0980]); % Red-orange
+plot(t, sys_impulse, 'LineWidth', 2, 'Color', [0.9290 0.6940 0.1250]); 
 
-legend(["pinv", "regularized", "system"])
+% Add grid for better visibility
+grid on;
+
+% Add axis labels and title
+xlabel('Time');
+ylabel('Amplitude');
+title('System Response Comparison');
+
+% Update legend
+legend(["Pseudo-Inverse", "Regularized", "True Response"], 'Location', 'best');
+
+% Optional: limit axis range for clarity
+xlim([0, max(t)]);
+ylim padded;  % adds a small margin
