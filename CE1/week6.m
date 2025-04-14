@@ -36,7 +36,7 @@ f_naive = figure(1);
 bode(H, 'r.', {min_freq, max_freq});
 hold on
 bode(sys_true, 'b', {min_freq, max_freq})
-legend(["Identified", "Real"])
+legend(["Identified", "Real"], 'Location', 'southoutside')
 grid on;
 title('No Window, No Averaging');
 
@@ -44,7 +44,7 @@ f_hann_no_avg = figure(2);
 bode(H_hann, 'r.', {min_freq, max_freq});
 hold on
 bode(sys_true, 'b', {min_freq, max_freq})
-legend(["Identified", "Real"])
+legend(["Identified", "Real"], 'Location', 'southoutside')
 grid on;
 title('Hann Window, No Averaging');
 
@@ -52,7 +52,7 @@ f_hann_avg = figure(3);
 bode(H_avg_hann, 'r.', {min_freq, max_freq});
 hold on
 bode(sys_true, 'b', {min_freq, max_freq})
-legend(["Identified", "Real"])
+legend(["Identified", "Real"], 'Location', 'southoutside')
 grid on;
 title('Hann Window, 10 Group Averaging');
 
@@ -61,7 +61,7 @@ f4 = figure(4);
 bode(H_hamming, 'r.', {min_freq, max_freq});
 hold on
 bode(sys_true, 'b', {min_freq, max_freq})
-legend(["Identified", "Real"])
+legend(["Identified", "Real"], 'Location', 'southoutside')
 grid on;
 title('Hamming Window, No Averaging');
 
@@ -69,7 +69,7 @@ f5 = figure(5);
 bode(H_avg_hamming, 'r.', {min_freq, max_freq});
 hold on
 bode(sys_true, 'b', {min_freq, max_freq})
-legend(["Identified", "Real"])
+legend(["Identified", "Real"], 'Location', 'southoutside')
 grid on;
 title('Hamming Window, 10 Group Averaging');
 
