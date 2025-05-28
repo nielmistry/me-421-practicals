@@ -2,14 +2,14 @@ clear all
 close all
 
 matlab = false;
+mkdir("plots/")
 
 load("data/data_stable.mat")
 Ts = 0.01;
 t = (0:Ts:(size(y) - 1)*(Ts))';
 tt = timetable(u, y, 'SampleRate', 1/Ts);
 %% 
-% FIR Model Getter
-
+% <lst_1>
 d = 1;
 m = 200; 
 
@@ -40,7 +40,10 @@ end
 % note: this is opposite from the convention 
 %       in the book. Theta_hat(1) = b_m, Theta_hat(m) = b_d
 Theta_hat = information_matrix\multiplicand;
-Theta_hat_ml = impulseest(tt, 201, d).Numerator(2:202)';
+% </lst_1>
+if matlab
+    Theta_hat_ml = impulseest(tt, 201, d).Numerator(2:202)';
+end
 
 %% 
 % 
@@ -54,7 +57,9 @@ for k=1:N
            input = u(k - i - d + 1);
        end
        y_pred(k) = y_pred(k) +  Theta_hat(m - i + 1) * input;
-       y_pred_ml(k) = y_pred_ml(k) + Theta_hat_ml(i) * input;
+       if matlab
+        y_pred_ml(k) = y_pred_ml(k) + Theta_hat_ml(i) * input;
+       end
     end
 end
 %% 
@@ -70,4 +75,22 @@ end
 legend()
 grid()
 title("y vs FIR y_{pred}")
+xlabel("t [s]")
+ylabel("y")
 saveas(f, "plots/fir_y_ypred.png")
+
+J = sum((y_pred - y).^2);
+noise_variance = (1/(N - m)) * J;
+cov = noise_variance^2 .* inv(information_matrix);
+
+
+disp("J: " + J + ", SigmaHat = " + noise_variance);
+
+f2 = figure(2);
+clf
+errorbar(flip(Theta_hat), 2*sqrt(noise_variance)*ones(size(Theta_hat)));
+xlabel("k [sample]")
+ylabel("y")
+grid()
+
+saveas(f2, "plots/fir.png")
