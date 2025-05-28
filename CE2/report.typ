@@ -31,8 +31,10 @@
 
 === Code
 
-
-#raw_from_m("fir_identification.m", "lst_1")
+#figure(
+  raw_from_m("fir_identification.m", "lst_1"),
+  caption: [FIR Model Generation ($accent(theta, hat)$) Code]
+)
 
 === Plots
 
@@ -45,19 +47,6 @@ The loss is:
 $ J(accent(theta, hat)) = 2.87 times 10^4 $.
 === Covariance Code & Plots
 
+#raw_from_m("fir_identification.m", "lst_fir_cov")
 
-
-== Code!
-
-
-=== Subproblem
-We can nest subproblems!
-
-==== Subsubproblem
-As far as we want!
-
-
-#pagebreak()
-
-We also have a nice little header for the ensuing pages!
 

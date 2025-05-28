@@ -79,10 +79,11 @@ xlabel("t [s]")
 ylabel("y")
 saveas(f, "plots/fir_y_ypred.png")
 
+%<lst_fir_cov>
 J = sum((y_pred - y).^2);
 noise_variance = (1/(N - m)) * J;
 cov = noise_variance^2 .* inv(information_matrix);
-
+%</lst_fir_cov>
 
 disp("J: " + J + ", SigmaHat = " + noise_variance);
 
