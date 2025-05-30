@@ -1,4 +1,4 @@
-clear all
+clear
 close all
 
 matlab = false;
@@ -26,9 +26,9 @@ for k=1:N
     end_ = k - d;
     start_ = max(start_, 1);
     end_ = max(end_, 1);
-    range = end_ - start_ + 1;
-    phi_entry(1:range) = u(start_:end_);
-    ys(1:range) = y(start_:end_);
+    range_ = end_ - start_ + 1;
+    phi_entry(1:range_) = u(start_:end_);
+    ys(1:range_) = y(start_:end_);
     
     
     phi = phi_entry * phi_entry';

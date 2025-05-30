@@ -14,6 +14,7 @@ tt = timetable(u, y, 'SampleRate', 1/Ts);
 N = size(y, 1);
 n = 2;
 m = 2;
+d = 1;
 assert(m == n, "Assuming m == n here")
 inf_matrix = zeros(2*m, 2*m);
 multiplicand = zeros(2*m, 1);
@@ -26,7 +27,7 @@ for k=m + 1:N
     multiplicand = multiplicand + sigma * y(k);
 end
 
-Theta_hat = inf_matrix\multiplicand
+Theta_hat = inf_matrix\multiplicand;
 %</lst_arx_impl>
 
 %% Prediction 
@@ -68,13 +69,12 @@ J = sum(err.^2);
 disp("J = " + J);
 
 %% Identified System
-numerator = [0, Theta_hat(m + 1), Theta_hat(m + 2)];
-denominator = [1, Theta_hat(1), Theta_hat(2)];
+%<arx_lsim>
+G = get_model_from_theta(Theta_hat, Ts, n, d);
+y_m = lsim(G, u, t);
+%</arx_lsim>
 
-G = tf(numerator, denominator, Ts)
-y_pred = lsim(G, u, t)
-
-err = (y_pred - y);
+difference = (y_m - y);
 f2 = figure(2);
 clf
 
@@ -84,20 +84,68 @@ set(gcf, 'Position', [100 100 800 400]);     % wider figure
 ax1 = subplot(2,1,1);
 plot(t, y,     'LineWidth',1.5, 'Color',[0 0.4470 0.7410], 'DisplayName','True');
 hold on
-plot(t, y_pred, '--', 'LineWidth',1.5, 'Color',[0.8500 0.3250 0.0980], 'DisplayName','Predicted');
+plot(t, y_m, '--', 'LineWidth',1.5, 'Color',[0.8500 0.3250 0.0980], 'DisplayName','Predicted');
 grid on
-ylabel('y')
-title('ARX: True vs. Predicted')
+ylabel('y_m')
+title('ARX: Measured vs. Model')
 legend('Location','best','FontSize',9)
 set(ax1, 'FontSize',11)
 
 % ---- Bottom: error trace ----
 ax2 = subplot(2,1,2);
-plot(t, err, 'LineWidth',1.2, 'Color',[0.4660 0.6740 0.1880]);
+plot(t, difference, 'LineWidth',1.2, 'Color',[0.4660 0.6740 0.1880]);
 grid on
 xlabel('Time (s)')
 ylabel('Error')
-title('Prediction Error: y_{hat} - y')
+title('Difference: y_{m} - y')
 set(ax2, 'FontSize',11)
 
-saveas(f2, "arx_y_ym.png")
+saveas(f2, "plots/arx_y_ym.png")
+
+%% Instrumental Variables
+
+%<lst_inst_var>
+assert(m == n, "Assuming m == n here")
+inf_matrix = zeros(2*m, 2*m);
+multiplicand = zeros(2*m, 1);
+for k=m + 1:N
+    y_vec = flip(y_m(k - m:k - 1));
+    u_vec = flip(u(k - m:k - 1));
+    
+    sigma = [-y_vec; u_vec];
+    inf_matrix = inf_matrix + sigma*sigma';   
+    multiplicand = multiplicand + sigma * y(k);
+end
+
+Theta_hat_iv = inf_matrix\multiplicand;
+
+G_iv = get_model_from_theta(Theta_hat_iv, Ts, n, d);
+y_iv = lsim(G_iv, u, t);
+%</lst_inst_var>
+
+f3 = figure(3);
+clf
+
+set(gcf, 'Position', [100 100 800 400]);     % wider figure
+
+% ---- Top: true vs. predicted ----
+ax1 = subplot(2,1,1);
+plot(t, y_m,     'LineWidth',1.5, 'Color',[0 0.4470 0.7410], 'DisplayName','ARX Model Predicted');
+hold on
+plot(t, y_iv, '--', 'LineWidth',1.5, 'Color',[0.8500 0.3250 0.0980], 'DisplayName','IV Model Predicted');
+grid on
+ylabel('y_m')
+title('ARX vs. IV')
+legend('Location','best','FontSize',9)
+set(ax1, 'FontSize',11)
+
+% ---- Bottom: error trace ----
+ax2 = subplot(2,1,2);
+plot(t, difference, 'LineWidth',1.2, 'Color',[0.4660 0.6740 0.1880]);
+grid on
+xlabel('Time (s)')
+ylabel('Error')
+title('Difference: y_{m} - y')
+set(ax2, 'FontSize',11)
+
+saveas(f3, "plots/arx_y_yinst.png")
